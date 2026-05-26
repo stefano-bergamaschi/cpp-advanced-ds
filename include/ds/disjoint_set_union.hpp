@@ -32,14 +32,15 @@ namespace ds{
                 return element_to_id[element];
             }
 
-            bool check(T element){
+            
+        public:
+            bool contains(T element){
                 pair<T, size_t> iterator = element_to_id_.find(element);
                 if(iterator == element_to_id.end()) return false;
                 return true;
             }
 
 
-        public:
             
     };
 }
