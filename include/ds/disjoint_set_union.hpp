@@ -95,8 +95,31 @@ namespace ds{
                 return set_count_;
             }
 
+            vector<T> get_set(T element){
+                vector<T> result;
+                size_t root_index = find_root_by_index(convert_to_index(element));
+                for(size_t i = 0; i < next_index_; i++){
+                    if(find_root_by_index(i) == root_index) result.push_back(id_to_element_[i]);
+                }
+                return result;
+            }
+
+            // vector<vector<T>> get_all_sets(){
+            //     vector<vector<T>> result;
+            //     unordered_map<size_t, vector<T>> root_to_elements;
+            //     for(size_t i = 0; i < next_index_; i++){
+            //         size_t root_index = find_root_by_index(i);
+            //         root_to_elements[root_index].push_back(id_to_element_[i]);
+            //     }
+            //     for(auto& pair : root_to_elements){
+            //         result.push_back(pair.second);
+            //     }
+            //     return result;
+            // }
 
 
+
+            
 
             
     };
