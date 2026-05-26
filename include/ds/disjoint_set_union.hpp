@@ -8,17 +8,17 @@ namespace ds{
     template<typename T>
     class dsu{
         private:
-            vector<size_t> parent_;
-            vector<size_t> size_;
-            unordered_map<T, size_t> element_to_id_;
-            vector<T> id_to_element_;
+            std::vector<size_t> parent_;
+            std::vector<size_t> size_;
+            std::unordered_map<T, size_t> element_to_id_;
+            std::vector<T> id_to_element_;
             size_t next_index_;
             size_t set_count_;
 
             // * @brief Finds the root of the set containing the element at the given index, applying path compression.
             // * @param The index of the element.
             // * @return The index of the root of the set containing the element.
-            size_t find_root_by_index(size_t index){
+            size_t find_root_by_index(size_t index) const {
                 size_t root = index;
                 while(root != parent_[root]) root = parent_[root];
 
@@ -36,7 +36,8 @@ namespace ds{
             // * @param The element to convert.
             // * @return The index corresponding to the element.
             size_t convert_to_index(T element){
-                return element_to_id[element];
+                return element_to_id_.at(element);
+                //return element_to_id_[element];
             }
 
             
@@ -45,9 +46,7 @@ namespace ds{
             // * @param The element to check.
             // * @return True if the element is in the DSU, false otherwise.
             bool contains(T element){
-                pair<T, size_t> iterator = element_to_id_.find(element);
-                if(iterator == element_to_id.end()) return false;
-                return true;
+                return element_to_id_.find(element) != element_to_id_.end();
             }
 
             // * @brief Adds an element to the DSU. If the element is already in the DSU, it does nothing.
@@ -56,7 +55,7 @@ namespace ds{
             bool add_element(T element){
                 if(contains(element)) return false;
 
-                element_to_id_[next_index_] = element;
+                element_to_id_[element] = next_index_;
                 id_to_element_.push_back(element);
                 parent_.push_back(next_index_);
                 size_.push_back(1);
@@ -124,7 +123,7 @@ namespace ds{
             // * @return True if the elements are in the same set, false otherwise.
             bool same_set(T element1, T element2){
                 if(add_element(element1) or add_element(element2)) return false;
-                if(find_root_by_index(convert_to_index(element1)) == find_root_by_index(convert_to_index(element1))) return true;
+                if(find_root_by_index(convert_to_index(element1)) == find_root_by_index(convert_to_index(element2))) return true;
                 return false;
             }
 
@@ -134,7 +133,7 @@ namespace ds{
             // * @return True if the elements are in the same set, false otherwise.
             bool strict_same_set(T element1, T element2){
                 if(!contains(element1) or !contains(element2)) return false;
-                if(find_root_by_index(convert_to_index(element1)) == find_root_by_index(convert_to_index(element1))) return true;
+                if(find_root_by_index(convert_to_index(element1)) == find_root_by_index(convert_to_index(element2))) return true;
                 return false;
             }
 
@@ -169,9 +168,9 @@ namespace ds{
             // * @brief Returns all elements in the set containing the element.
             // * @param The element.
             // * @return A vector containing all elements in the set.
-            vector<T> get_set(T element){
+            std::vector<T> get_set(T element){
                 if(add_element(element)) return vector<T>{element};
-                vector<T> result;
+                std::vector<T> result;
                 size_t root_index = find_root_by_index(convert_to_index(element));
                 for(size_t i = 0; i < next_index_; i++){
                     if(find_root_by_index(i) == root_index) result.push_back(id_to_element_[i]);
@@ -182,9 +181,9 @@ namespace ds{
             // * @brief Returns all elements in the set containing the element only if the element is already in the DSU.
             // * @param The element.
             // * @return A vector containing all elements in the set, or an empty vector if the element is not in the DSU.
-            vector<T> strict_same_set(T element){
-                if(!contains(element)) return vector<T>{};
-                vector<T> result;
+            std::vector<T> strict_same_set(T element){
+                if(!contains(element)) return std::vector<T>{};
+                std::vector<T> result;
                 size_t root_index = find_root_by_index(convert_to_index(element));
                 for(size_t i = 0; i < next_index_; i++){
                     if(find_root_by_index(i) == root_index) result.push_back(id_to_element_[i]);
@@ -193,8 +192,8 @@ namespace ds{
             }
 
             // vector<vector<T>> get_all_sets(){
-            //     vector<vector<T>> result;
-            //     unordered_map<size_t, vector<T>> root_to_elements;
+            //     std::vector<std::vector<T>> result;
+            //     std::unordered_map<size_t, std::vector<T>> root_to_elements;
             //     for(size_t i = 0; i < next_index_; i++){
             //         size_t root_index = find_root_by_index(i);
             //         root_to_elements[root_index].push_back(id_to_element_[i]);
@@ -208,11 +207,11 @@ namespace ds{
             // * @brief Checks if the DSU is empty.
             // * @return True if the DSU is empty, false otherwise.
             bool empty(){
-                return !next_index_;
+                return next_index_ == 0;
             }
 
             // * @brief Clears the DSU, removing all elements and sets.
-            bool clear(){
+            void clear(){
                 parent_.clear();
                 size_.clear();
                 element_to_id_.clear();
