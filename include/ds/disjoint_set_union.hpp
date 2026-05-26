@@ -50,6 +50,7 @@ namespace ds{
                 size_.push_back(1);
 
                 next_index_++;
+                set_count_++;
 
                 return true;
             }
@@ -63,10 +64,31 @@ namespace ds{
 
                 if(index1 == index2) return false;
 
-                if(size_[index1] < size_[index2]) parent_[index1] = index2; 
-                else parent_[index2] = index1;
+                if(size_[index1] < size_[index2]){
+                    parent_[index1] = index2;
+                    size_[index2] += size_[index1];
+                }  
+                else{
+                    parent_[index2] = index1;
+                    size_[index1] += size_[index2];
+                } 
+                set_count_--;
                 
                 return true;
+            }
+
+            bool same_set(T element1, T element2){
+                if(add_element(element1) or add_element(element2)) return false;
+                if(find_root_by_index(convert_to_index(element1)) == find_root_by_index(convert_to_index(element1))) return true;
+                return false;
+            }
+
+            size_t size(){
+                return next_index_;
+            }
+
+            size_t set_size(T element){
+                return size_[find_root_by_index(convert_to_index(element))];
             }
 
 
