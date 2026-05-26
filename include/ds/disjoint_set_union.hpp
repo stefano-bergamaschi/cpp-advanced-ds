@@ -54,6 +54,21 @@ namespace ds{
                 return true;
             }
 
+            bool unite(T element1, T element2){
+                add_element(element1);
+                add_element(element2);
+
+                size_t index1 = find_root_by_index(convert_to_index(element1));
+                size_t index2 = find_root_by_index(convert_to_index(element2));
+
+                if(index1 == index2) return false;
+
+                if(size_[index1] < size_[index2]) parent_[index1] = index2; 
+                else parent_[index2] = index1;
+                
+                return true;
+            }
+
 
 
 
