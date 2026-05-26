@@ -91,6 +91,10 @@ namespace ds{
                 return size_[find_root_by_index(convert_to_index(element))];
             }
 
+            size_t set_count(){
+                return set_count_;
+            }
+
 
 
 
