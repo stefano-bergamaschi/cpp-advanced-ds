@@ -27,6 +27,10 @@ namespace ds{
 
                 return root;
             }
+
+            size_t convert_to_index(T element){
+                return element_to_id[element];
+            }
     };
 }
 
