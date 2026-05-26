@@ -31,6 +31,16 @@ namespace ds{
             size_t convert_to_index(T element){
                 return element_to_id[element];
             }
+
+            bool check(T element){
+                pair<T, size_t> iterator = element_to_id_.find(element);
+                if(iterator == element_to_id.end()) return false;
+                return true;
+            }
+
+
+        public:
+            
     };
 }
 
