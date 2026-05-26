@@ -13,6 +13,7 @@ namespace ds{
             unordered_map<T, size_t> element_to_id_;
             vector<T> id_to_element_;
             size_t next_index_;
+            size_t set_count_;
 
             size_t find_root_by_index(size_t index){
                 size_t root = index;
@@ -39,6 +40,21 @@ namespace ds{
                 if(iterator == element_to_id.end()) return false;
                 return true;
             }
+
+            bool add_element(T element){
+                if(contains(element)) return false;
+
+                element_to_id_[next_index_] = element;
+                id_to_element_.push_back(element);
+                parent_.push_back(next_index_);
+                size_.push_back(1);
+
+                next_index_++;
+
+                return true;
+            }
+
+
 
 
             
