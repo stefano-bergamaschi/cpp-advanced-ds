@@ -13,8 +13,8 @@ namespace ds{
             std::vector<size_t> size_;
             std::unordered_map<T, size_t> element_to_id_;
             std::vector<T> id_to_element_;
-            size_t next_index_;
-            size_t set_count_;
+            size_t next_index_ = 0;
+            size_t set_count_ = 0;
 
             // * @brief Finds the root of the set containing the element at the given index, applying path compression.
             // * @param The index of the element.
@@ -36,16 +36,47 @@ namespace ds{
             // * @brief Converts an element to its corresponding index in the DSU.
             // * @param The element to convert.
             // * @return The index corresponding to the element.
-            size_t convert_to_index(T element){
+            size_t convert_to_index(T& element) {
                 return element_to_id_[element];
             }
 
             
         public:
+            using value_type = T;
+            using std::swap;
+            
+            // * @brief Default constructor for the DSU, creating an empty DSU with no elements or sets.
+            dsu() = default;
+
+            // * @brief Constructs a DSU with a given initial capacity, reserving space for that many elements to optimize performance.
+            // * @param capacity The initial capacity for the DSU.
+            explicit dsu(size_t capacity){
+                reserve(capacity);
+            }  
+
+            // * @brief Copy constructor for the DSU, creating a new DSU that is a copy of the given DSU.
+            // * @param other The DSU to copy.
+            dsu(const dsu&) = default;
+            
+            // * @brief Move constructor for the DSU, creating a new DSU by moving the resources of the given DSU.
+            // * @param other The DSU to move.
+            dsu(dsu&&) noexcept = default;
+            
+            // * @brief Copy constructor for the DSU, creating a new DSU that is a copy of the given DSU.
+            // * @param other The DSU to copy.
+            dsu& operator=(const dsu&) = default;
+            
+            // * @brief Move constructor for the DSU, creating a new DSU by moving the resources of the given DSU.
+            // * @param other The DSU to move.
+            dsu& operator=(dsu&&) noexcept = default;
+
+            // * @brief Destructor for the DSU, cleaning up any resources used by the DSU.
+            ~dsu() = default;
+        
             // * @brief Checks if the element is already in the DSU.
             // * @param The element to check.
             // * @return True if the element is in the DSU, false otherwise.
-            bool contains(T element){
+            bool contains(T element) const {
                 return element_to_id_.find(element) != element_to_id_.end();
             }
 
@@ -123,7 +154,7 @@ namespace ds{
 
             // * @brief Returns the number of elements in the DSU.
             // * @return The number of elements in the DSU.
-            size_t size(){
+            size_t size() const {
                 return next_index_;
             }
 
@@ -137,23 +168,25 @@ namespace ds{
 
             // * @brief Returns the number of sets in the DSU.
             // * @return The number of sets in the DSU.
-            size_t set_count(){
+            size_t set_count() const {
                 return set_count_;
             }
 
             // * @brief Returns all elements in the set containing the element.
             // * @param The element.
             // * @return A vector containing all elements in the set.
-            std::vector<T> get_set(T element){
-                if(!contains(element)) return std::vector<T>{};
-                std::vector<T> result;
-                size_t root_index = find_root_by_index(convert_to_index(element));
-                for(size_t i = 0; i < next_index_; i++){
-                    if(find_root_by_index(i) == root_index) result.push_back(id_to_element_[i]);
-                }
-                return result;
-            }
+            // std::vector<T> get_set(T element){
+            //     if(!contains(element)) return std::vector<T>{};
+            //     std::vector<T> result;
+            //     size_t root_index = find_root_by_index(convert_to_index(element));
+            //     for(size_t i = 0; i < next_index_; i++){
+            //         if(find_root_by_index(i) == root_index) result.push_back(id_to_element_[i]);
+            //     }
+            //     return result;
+            // }
 
+            // * @brief Returns all sets in the DSU as a vector of vectors, where each inner vector contains the elements of a set.
+            // * @return A vector of vectors, where each inner vector contains the elements of a
             // vector<vector<T>> get_all_sets(){
             //     std::vector<std::vector<T>> result;
             //     std::unordered_map<size_t, std::vector<T>> root_to_elements;
@@ -169,7 +202,7 @@ namespace ds{
 
             // * @brief Checks if the DSU is empty.
             // * @return True if the DSU is empty, false otherwise.
-            bool empty(){
+            bool empty() const {
                 return next_index_ == 0;
             }
 
@@ -188,7 +221,24 @@ namespace ds{
             void reserve(size_t size){
                 parent_.reserve(size);
                 size_.reserve(size);
+                element_to_id_.reserve(size);
                 id_to_element_.reserve(size);
+            }
+
+
+            // * @brief Shrinks the capacity of the DSU's internal data structures to fit their current size, optimizing memory usage.
+            void fit(){
+                parent_.shrink_to_fit();
+                size_.shrink_to_fit();
+                element_to_id_.shrink_to_fit();
+                id_to_element_.shrink_to_fit();
+            }
+
+            // * @brief Applies path compression to all elements in the DSU, optimizing the structure for future find operations.
+            void compress_path(){
+                for(size_t i = 0; i < next_index_; i++){
+                    find_root_by_index(i);
+                }
             }
     };
 }
